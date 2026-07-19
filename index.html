@@ -5,71 +5,237 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClapTrap - Bot Discord</title>
     <style>
+        :root {
+            --discord-blue: #5865F2;
+            --discord-hover: #4752c4;
+            --bg-dark: #0f1115;
+            --card-bg: rgba(23, 26, 33, 0.85);
+            --text-glow: rgba(88, 101, 242, 0.4);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #23272a;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
             color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Effet de lumière interactif en arrière-plan */
+        .glow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(88, 101, 242, 0.15), transparent 80%);
+            transition: background 0.1s ease;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 650px;
+            width: 90%;
+            margin: 40px auto;
+            background: var(--card-bg);
+            padding: 50px 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(88, 101, 242, 0.05);
             text-align: center;
-            padding: 50px 20px;
+        }
+
+        /* Style de l'icône/avatar du Bot */
+        .bot-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #2c2f33;
+            margin: 0 auto 20px auto;
+            border: 4px solid var(--discord-blue);
+            box-shadow: 0 0 25px var(--text-glow);
+            object-fit: cover;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        h1 {
+            font-size: 3.2em;
+            margin: 10px 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 40%, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(88, 101, 242, 0.2);
+        }
+
+        .tagline {
+            font-size: 1.25em;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            font-weight: 400;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        @media(min-width: 480px) {
+            .btn-group {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-invite {
+            background: linear-gradient(135deg, var(--discord-blue), #4752c4);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-invite:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
+            background: linear-gradient(135deg, #6572f5, #4f5cd4);
+        }
+
+        .btn-support {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-support:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .features-box {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .features-box h3 {
+            margin-top: 0;
+            color: #f8fafc;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
             margin: 0;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #2c2f33;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+
+        li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 14px;
+            color: #cbd5e1;
+            font-size: 1.05em;
+            line-height: 1.5;
         }
-        h1 { color: #5865F2; font-size: 2.8em; margin-bottom: 10px; }
-        p { font-size: 1.2em; color: #b9bbbe; line-height: 1.6; }
-        .btn {
-            display: inline-block;
-            background-color: #5865F2;
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            font-size: 1.2em;
-            font-weight: bold;
-            border-radius: 5px;
-            margin: 20px 10px;
-            transition: background 0.2s, transform 0.1s;
+
+        li::before {
+            content: "⚡";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--discord-blue);
         }
-        .btn:hover { background-color: #4752c4; transform: scale(1.02); }
-        .btn-support { background-color: #4f545c; }
-        .btn-support:hover { background-color: #686d73; }
-        .features {
-            text-align: left;
-            margin-top: 40px;
-            background: #23272a;
-            padding: 25px;
-            border-radius: 6px;
+
+        li strong {
+            color: #ffffff;
         }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; color: #dbdee1; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>ClapTrap</h1>
-        <p>Le bot ultime pour sécuriser, modérer et animer ton serveur Club/Trap avec style.</p>
-        
-        <!-- TON LIEN D'INVITATION DIRECTEMENT INTÉGRÉ ICI -->
-        <a href="https://discord.com/oauth2/authorize?client_id=1519381900848791572&permissions=8&integration_type=0&scope=bot" class="btn" target="_blank">🔗 Inviter le Bot</a>
-        
-        <!-- METS LE LIEN D'INVITATION DE TON SERVEUR DISCORD ENTRE LES GUILLEMETS CI-DESSOUS -->
-        <a href="METS_ICI_LE_LIEN_DE_TON_SERVEUR_SUPPORT" class="btn btn-support" target="_blank">💬 Serveur de Support</a>
+    <div class="glow-bg" id="glowBg"></div>
 
-        <div class="features">
+    <div class="container">
+        <!-- Récupération dynamique automatique de l'avatar de ton Bot Discord -->
+        <img src="https://images.discordapp.net/avatars/1519381900848791572/a_e8ddba752d53bfcefb8fb7ee8c1e8d97.png?size=256" 
+             onerror="this.src='https://res.cloudinary.com/dynx4497e/image/upload/v1711200000/discord_placeholder.png'" 
+             alt="ClapTrap Logo" class="bot-avatar">
+
+        <h1>ClapTrap</h1>
+        <p class="tagline">Le bot ultime pour sécuriser, modérer et propulser ton serveur Club/Trap vers les sommets.</p>
+        
+        <div class="btn-group">
+            <a href="https://discord.com/oauth2/authorize?client_id=1519381900848791572&permissions=8&integration_type=0&scope=bot" class="btn btn-invite" target="_blank">
+                🔗 Inviter sur le serveur
+            </a>
+            <a href="https://discord.com/invite/SBpffRkr3n" class="btn btn-support" target="_blank">
+                💬 Support Discord
+            </a>
+        </div>
+
+        <div class="features-box">
             <h3>🚀 Fonctionnalités principales :</h3>
             <ul>
-                <li><strong>Modération efficace :</strong> Protège ton serveur des spams et des membres malveillants instantanément.</li>
-                <li><strong>Gestion du Club :</strong> Des outils adaptés pour gérer l'ambiance et les salons de ton serveur.</li>
-                <li><strong>Configuration simple :</strong> Pas de prise de tête, le bot est prêt à l'emploi dès son arrivée.</li>
+                <li><strong>Modération absolue :</strong> Système anti-spam et sécurité renforcée contre les raids et membres malveillants.</li>
+                <li><strong>Gestion Club & Trap :</strong> Des configurations intelligentes conçues spécifiquement pour l'ambiance de ta communauté.</li>
+                <li><strong>Zéro configuration :</strong> Prêt et opérationnel dès son arrivée, gérable en quelques commandes simples.</li>
             </ul>
         </div>
     </div>
 
+    <script>
+        // Script pour animer la lumière en arrière-plan selon les mouvements de la souris
+        const bg = document.getElementById('glowBg');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            bg.style.setProperty('--mouse-x', `${x}%`);
+            bg.style.setProperty('--mouse-y', `${y}%`);
+        });
+    </script>
 </body>
 </html>
